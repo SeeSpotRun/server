@@ -68,14 +68,10 @@ class RetryJob extends Job {
 				\OC::$server->getL10N('federatedfilesharing'),
 				\OC::$server->getCloudIdManager()
 			);
-			$discoveryManager = new DiscoveryManager(
-				\OC::$server->getMemCacheFactory(),
-				\OC::$server->getHTTPClientService()
-			);
 			$this->notifications = new Notifications(
 				$addressHandler,
 				\OC::$server->getHTTPClientService(),
-				$discoveryManager,
+				\OC::$server->getOCSDiscoveryService(),
 				\OC::$server->getJobList()
 			);
 		}
@@ -108,7 +104,7 @@ class RetryJob extends Job {
 		$try = (int)$argument['try'] + 1;
 
 		$result = $this->notifications->sendUpdateToRemote($remote, $remoteId, $token, $action, $data, $try);
-		
+
 		if ($result === true || $try > $this->maxTry) {
 			$this->retainJob = false;
 		}

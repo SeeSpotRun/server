@@ -152,17 +152,13 @@ class RequestHandlerController extends OCSController {
 
 			\OC_Util::setupFS($shareWith);
 
-			$discoveryManager = new DiscoveryManager(
-				\OC::$server->getMemCacheFactory(),
-				\OC::$server->getHTTPClientService()
-			);
 			$externalManager = new \OCA\Files_Sharing\External\Manager(
 					\OC::$server->getDatabaseConnection(),
 					\OC\Files\Filesystem::getMountManager(),
 					\OC\Files\Filesystem::getLoader(),
 					\OC::$server->getHTTPClientService(),
 					\OC::$server->getNotificationManager(),
-					$discoveryManager,
+					\OC::$server->getOCSDiscoveryService(),
 					$shareWith
 				);
 
@@ -482,9 +478,9 @@ class RequestHandlerController extends OCSController {
 	 */
 	public function revoke($id) {
 		$token = $this->request->getParam('token');
-		
+
 		$share = $this->federatedShareProvider->getShareById($id);
-		
+
 		if ($this->verifyShare($share, $token)) {
 			$this->federatedShareProvider->removeShareFromTable($share);
 			return new Http\DataResponse();
@@ -492,7 +488,7 @@ class RequestHandlerController extends OCSController {
 
 		throw new OCSBadRequestException();
 	}
-	
+
 	/**
 	 * get share
 	 *
