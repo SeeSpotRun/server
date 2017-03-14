@@ -405,7 +405,7 @@ class UsersController extends Controller {
 				array(
 					'message' => (string) $message,
 				),
-				Http::STATUS_FORBIDDEN
+				Http::STATUS_CONFLICT
 			);
 		}
 
